@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tanzhou.tzms.product.dao.ProductTypeDao">
+
+<!-- public List<Map<String,Object>> findAllProductType(); -->
+<!-- 查询所有的分类以及这个分类的父类名称 -->
+<select id="findAllProductType" resultType="Map">
+select p1.*,p2.name parentName from tz_producttype p1 LEFT JOIN tz_producttype p2 
+on p1.parentId=p2.id
+</select>
+
+<!-- -public Integer deleteType(Integer id); -->
+<delete id="deleteType">
+	delete from tz_producttype where id=#{id}
+</delete>
+
+<!-- public Integer hasChildType(Integer id); -->
+<select id="hasChildType" resultType="int">
+	select count(*) from tz_producttype where parentId=#{id}
+</select>
+
+<!-- public List<Node> findZtreeNode(); -->
+<select id="findZtreeNode" resultType="com.tanzhou.tzms.common.vo.Node">
+	select id,parentId,name from tz_producttype
+</select>
+
+<!-- public Integer insertProductType(ProductType pt); -->
+<insert id="insertProductType">
+INSERT INTO tz_producttype
+(name,sort,parentId,remarks,createdUser,createdTime,modifiedUser,modifiedTime)
+ VALUES (#{name}, #{sort}, #{parentId}, #{remarks}, #{createdUser},
+  now(),#{modifiedUser}, now())
+</insert>
+</mapper>
+
+

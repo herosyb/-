@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tanzhou.tzms.product.dao.TeamDao">
+   <select id="findTeamAll" resultType="com.tanzhou.tzms.product.domain.Team">
+    SELECT * FROM tz_teams 
+   </select>
+    <select id="findTeamById" resultType="com.tanzhou.tzms.product.domain.Team">
+    SELECT * FROM tz_teams  where id =#{id}
+   </select>
+   <select id="findTeamByName" resultType="com.tanzhou.tzms.product.domain.Team">
+    SELECT * FROM tz_teams 
+    <where>
+    <if test="name!=null and name !=''">
+     name LIKE CONCAT('%',#{name},'%')
+    </if>
+    </where>
+   </select>
+    <insert id="insertTeam">
+	 	insert into tz_teams
+	 	(name,projectId,status,remarks)
+	 	values(#{name},#{projectId},#{status},#{remarks})
+	 </insert>
+	 <update id="updateTeam">
+	 	update tz_teams
+	 	<set>	 		
+	 		<if test="name!=null and name!=''">
+	 			name =#{name}
+	 		</if>	 		
+	 		<if test="status!=null">
+	 			,status =#{status}
+	 		</if>
+	 		<if test="remarks!=null and remarks!=''">
+	 			,remarks =#{remarks}
+	 		</if>		 	
+	 	</set>
+		where id = #{id}
+	 </update>
+<!-- 	 public Integer updateStatusById(Integer status, String[] ids)  -->
+		<update id="updateStatusById">
+			update tz_teams set status =#{status} where id in
+			<foreach collection="ids" item="id" open="(" close=")" separator=",">
+	 		#{id}
+	 	    </foreach>		  
+		</update>
+</mapper> 

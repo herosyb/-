@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- default-lazy-init="true"
+项目启动时不会实例化注解的bean
+除非启动项目时需要用到
+未实例化的注解对象在程序实际访问调用时才注入调用 -->
+<beans default-lazy-init="true"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+   <!--配置c3p0连接池 -->
+	  <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="${jdbc.driver}"></property>
+			<property name="jdbcUrl" value="${jdbc.url}"></property>
+			<property name="user" value="${jdbc.username}"></property>
+			<property name="password" value="${jdbc.password}"></property>
+	</bean>
+	
+     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	   <property name="dataSource" ref="dataSource"></property>
+	   <property name="configLocation" value="classpath:mybatis-config.xml"></property>
+	   <!-- 自动扫描mapping.xml文件 -->
+	   <property name="mapperLocations" >
+			<list>
+				<value>classpath:mappers/*/*.xml</value>
+			</list>
+		</property>
+	 </bean>
+    <!-- Mapper接口所在包，Spring会自动查找其下的Mapper -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+		<property name="basePackage" value="com.tanzhou.**.dao"/>
+	</bean>
+
+</beans>

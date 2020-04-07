@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tanzhou.tzms.product.dao.ProjectDao">
+	<sql id="whereQuery">
+		<where><!-- 将条件前多余的and或者or去掉 -->
+	 		<if test="name!=null and name!=''" >
+	 			name  like concat("%",#{name},"%")
+	 		</if>
+	 		<if test="status!=null">
+	 			and  status=#{status}
+	 		</if>
+	 	</where>
+	</sql>
+	<!-- public List<Project> findAllProject(); -->
+	<select id="findAllProject" resultType="com.tanzhou.tzms.product.domain.Project">
+		SELECT * FROM tz_projects	
+	</select>
+	
+	<!-- 	public List<Project> findPageObject(@Param("startIndex")int startIndex,@Param("pageSize")int pageSize);
+	 -->
+	 <select id="findPageObject" resultType="com.tanzhou.tzms.product.domain.Project">
+	 	SELECT * FROM tz_projects  
+	 	<include refid="whereQuery"></include>
+	 	order by createdTime DESC LIMIT #{startIndex},#{pageSize}
+	 </select>
+	 
+	 <select id="getRowCount" resultType="int">
+	 	SELECT COUNT(*) FROM tz_projects 
+	 	<include refid="whereQuery"></include>
+	 </select>
+	 <!-- 	public Integer updateStatusById(Integer status,String[] ids); -->
+	 <update id="updateStatusById">
+	 	update tz_projects set status=#{status} where id in
+	 	<foreach collection="ids" item="id" open="(" close=")" separator=",">
+	 		#{id}
+	 	</foreach>
+	 </update>
+	 
+	 
+	 <!-- public Integer insertProject(Project project); -->
+	 <insert id="insertProject">
+	 	insert into tz_projects 
+	 	(code,name,beginDate,endDate,status,remarks,
+	 	createdTime,modifiedTime,createdUser,modifiedUser)
+	 	values(#{code},#{name},#{beginDate},#{endDate},#{status},#{remarks},now(),
+	 	now(),#{createdUser},#{modifiedUser})
+	 </insert>
+	 
+	 <!-- public Integer updateProject(Project project); -->
+	 <update id="updateProject">
+	 	update tz_projects  
+	 	<set>
+	 		<if test="code!=null and code!=''">
+	 			code =#{code}
+	 		</if>
+	 		<if test="name!=null and name!=''">
+	 			,name =#{name}
+	 		</if>
+	 		<if test="beginDate!=null">
+	 			,beginDate =#{beginDate}
+	 		</if>
+	 		<if test="endDate!=null">
+	 			,endDate =#{endDate}
+	 		</if>
+	 		<if test="status!=null">
+	 			,status =#{status}
+	 		</if>
+	 		<if test="remarks!=null and remarks!=''">
+	 			,remarks =#{remarks}
+	 		</if>	
+	 		,modifiedTime=now() 
+	 	</set>
+		where id = #{id}
+	 </update>
+	 
+	 <!-- public Project findProjectById(Integer id); -->
+	 <select id="findProjectById" resultType="com.tanzhou.tzms.product.domain.Project">
+	 	select * from tz_projects where id=#{id}
+	 </select>
+</mapper>

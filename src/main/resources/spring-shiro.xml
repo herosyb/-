@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true" 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- 配置web.xml中过滤器对应的spring容器的bean -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager"></property>
+		<!-- 要求登录时访问的连接 -->
+		<property name="loginUrl" value="/loginUI"></property>
+		<!-- 访问对未对其授权的资源时，要访问的连接 -->
+		<property name="unauthorizedUrl" value="/errorUI"></property>
+		<property name="filterChainDefinitions">
+			<value>
+				/tzms/** = anon
+				/bootstrap/** = anon
+				/js/** = anon
+				/css/** = anon
+				/jquery/** = anon
+				/login = anon
+				<!-- 退出操作 ，此方法会把session清空-->
+				/logout = logout
+				
+				<!--查询菜单管理需要菜单管理权限  -->
+			<!-- /menu/listUI = perms[sys:menu:view] -->
+			<!-- 所有的url都可以匿名访问 /** = anon-->
+			<!-- 所有的url都必须要认证通过后才可以进行访问 -->
+				/** = authc
+			</value>
+		</property>
+	</bean>
+	
+	<!-- 配置安全管理器 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroUserRealm"></property>
+		<property name="cacheManager" ref="cacheManager"></property>
+	</bean>
+	
+	<!-- 配置自定义的realm -->
+	<bean id="shiroUserRealm" class="com.tanzhou.tzms.common.service.impl.ShiroUserRealm">
+		<property name="credentialsMatcher" ref="credentialsMatcher"></property>
+	
+	</bean>
+	
+
+	<!-- 定义凭证匹配器 -->
+	<bean id="credentialsMatcher"  class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+		<property name="hashAlgorithmName" value="MD5"></property>
+		<property name="hashIterations" value="1"></property>
+	</bean>
+	
+	
+	<bean id="advisor" class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"></property>
+	</bean>
+	
+	<!-- 配置缓存管理器 -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:shiro-ehcache.xml"></property>
+	</bean>
+</beans>

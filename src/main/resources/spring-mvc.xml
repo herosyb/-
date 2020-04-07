@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true" 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+   <!-- spring 包的扫描
+     1)dao
+     2)service (@Service)
+     3)controller(@Controller)
+     4).....
+     -->
+    <context:component-scan base-package="com.tanzhou.tzms" />
+    
+    
+    <aop:config proxy-target-class="true"></aop:config>
+    
+         <!--静态页面，如html,css,js,images可以访问-->
+	<mvc:default-servlet-handler></mvc:default-servlet-handler>
+		<!--注解驱动，以使得访问路径与方法的匹配可以通过注解配置-->
+	<mvc:annotation-driven></mvc:annotation-driven>
+	
+    <!-- spring mvc 注解及类型转换 -->
+    <mvc:annotation-driven conversion-service="conversionService" />
+    
+    <bean id="conversionService"
+        class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+    </bean>
+    
+    
+    <!-- spring mvc 视图解析器 -->    
+    <!-- 定义跳转的文件的前后缀 ，视图模式配置 -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 自动给后面action的方法return的字符串加上前缀和后缀，变成一个 可用的url地址 -->
+        <property name="prefix" value="/WEB-INF/pages/" />
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+    
+      
+    <!-- 配置文件上传的视图解析器 -->
+    <bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 默认编码 -->
+		<property name="defaultEncoding" value="utf-8" />
+		<!-- 文件大小最大值 -->
+		<property name="maxUploadSize" value="10485760000" />
+		<!-- 内存中的最大值 -->
+		<property name="maxInMemorySize" value="40960" />
+    </bean>
+    
+    <!-- 配置拦截器 
+     <mvc:interceptors>
+    	<mvc:interceptor>
+    			<mvc:mapping path="/**"/> 
+    			<mvc:exclude-mapping path="/**/images/*"/>
+    			<mvc:exclude-mapping path="/**/bootstrap/*"/>
+    			<mvc:exclude-mapping path="/**/js/*"/>
+    			<mvc:exclude-mapping path="/**/css/*"/>
+    			<mvc:exclude-mapping path="/**/jquery/*"/>
+    			<bean class="com.tanzhou.tzms.common.web.LoginInterceptor"></bean>
+    	</mvc:interceptor>
+    </mvc:interceptors>  -->
+    
+    
+</beans>

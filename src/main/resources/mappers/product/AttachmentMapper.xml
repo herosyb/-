@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tanzhou.tzms.product.dao.AttachmentDao">
+	<!-- 	public Integer insertAttachment(Attachment a);-->
+	<insert id="insertAttachment">
+		insert into tz_attachements (title,fileName,contentType,filePath,fileDisgest,createdUser,createdTime,modifiedUser,modifiedTime)
+		values(#{title},#{fileName},#{contentType},#{filePath},#{fileDisgest},#{createdUser},now(),#{modifiedUser},now())
+	</insert>
+
+<!-- public Integer getRowCountByDigest(String filedigest); -->
+<select id="getRowCountByDigest" resultType="int">
+	select count(*) from tz_attachements where fileDisgest=#{filedigest}
+</select>
+
+	<!-- public List<Attachment> findAttachment(); -->
+	<select id="findAttachment" resultType="com.tanzhou.tzms.product.domain.Attachment">
+		select * from tz_attachements
+	</select>
+	
+	<!-- public Attachment findAttachmentById(Integer id); -->
+	<select id="findAttachmentById" resultType="com.tanzhou.tzms.product.domain.Attachment">
+		select * from tz_attachements where id=#{id}
+	</select>
+</mapper>
